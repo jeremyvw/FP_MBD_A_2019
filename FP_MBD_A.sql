@@ -1260,7 +1260,7 @@ BEGIN
                       where nonotajual=:new.nonotajual) and
       koderoti  = :new.koderoti;
   update hjual set totaljual = totaljual + (:new.hargajual * :new.jumjual)
-                               - (:new.hargajual * :new.jumjual)
+                               - (:old.hargajual * :old.jumjual)
   where nonotajual = :new.nonotajual;
    elsif deleting then
      update stokcabang 
@@ -1316,6 +1316,33 @@ END;
 SHOW ERR;
 	    
 --FUNCTION
+--FUNCTION ROTI					   
+CREATE OR REPLACE FUNCTION GETBIAYAROTI(KODER VARCHAR2) RETURN NUMBER IS
+CURSOR CARIHARGA(KODERR VARCHAR2) 
+       IS 
+    SELECT SUM(HARGABHN * JUMPERLU) 
+    FROM BAHAN,RESEP
+       WHERE BAHAN.KODEBHN = RESEP.KODEBHN AND
+             RESEP.KODEROTI = KODERR;
+BIAYA NUMBER(10);    
+BEGIN
+   OPEN CARIHARGA(KODER);
+   LOOP
+      FETCH CARIHARGA INTO BIAYA;
+   EXIT WHEN CARIHARGA%NOTFOUND;
+   END LOOP;
+   CLOSE CARIHARGA;
+   RETURN BIAYA;
+END;
+/
+SHOW ERR;
+
+CREATE OR REPLACE VIEW DATAROTI AS
+SELECT KODEROTI,NAMAROTI,GETBIAYAROTI(KODEROTI) BIAYA,HARGAROTI, (HARGAROTI-GETBIAYAROTI(KODEROTI)) UNTUNG
+FROM ROTI;
+
+SELECT * FROM DATAROTI;
+											 
 CREATE OR REPLACE FUNCTION GETBIAYAPROD(TGL DATE) RETURN NUMBER IS
    BIAYAPERHARI NUMBER(10);
 BEGIN
