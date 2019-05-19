@@ -1226,6 +1226,7 @@ declare
 begin
    autogenpenbelian(sysdate,nobeli);
    dbms_output.put_line('No Nota beli : ' || nobeli);
+   INSERT INTO HBELI VALUES(nobeli,'SP001',to_date(sysdate,'dd/mm/yyyy'),0);
 end;
 /					   
 set serveroutput on;
@@ -1234,6 +1235,7 @@ declare
 begin
    autogenpenjualan(sysdate,nojual);
    dbms_output.put_line('No Nota Jual : ' || nojual);
+   INSERT INTO HJUAL VALUES(nojual,'C006','RK01',to_date(sysdate,'dd/mm/yyyy'),0);
 end;
 /
 SHOW ERR;
